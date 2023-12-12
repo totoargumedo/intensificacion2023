@@ -7,18 +7,19 @@
 // const salud = 27;
 // const clase = "Asesino";
 
-const personaje = {
-  nombre: "Neb",
-  imagen:
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsmxcTfqNIR-Kiia8hZr9zxF-ejPi9neT7HVlkqbNuugUrXgwItlOmew2Ui26Z6uBlORc&usqp=CAU",
-  descripcion: "Asesino del gremio gris, nacido en las montañas de la luna",
-  nivel: 100,
-  salud: 335,
-  clase: "Asesino",
-};
+// const personaje = {
+//   nombre: "Neb",
+//   imagen:
+//     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsmxcTfqNIR-Kiia8hZr9zxF-ejPi9neT7HVlkqbNuugUrXgwItlOmew2Ui26Z6uBlORc&usqp=CAU",
+//   descripcion: "Asesino del gremio gris, nacido en las montañas de la luna",
+//   nivel: 100,
+//   salud: 335,
+//   clase: "Asesino",
+// };
 
 //base de datos de personajes
-const personajes = [
+
+const personajesBases = [
   {
     nombre: "Neb",
     imagen:
@@ -101,6 +102,11 @@ const personajes = [
     clase: "Paladín",
   },
 ];
+
+const personajes =
+  JSON.parse(localStorage.getItem("personajesDB")) || personajesBases;
+localStorage.setItem("personajesDB", JSON.stringify(personajes));
+
 //solo los primeros 3 personajes
 const favorites = personajes.slice(0, 3);
 
@@ -153,10 +159,12 @@ const btn_personajes = document.getElementById("boton_personajes");
 
 btn_personajes.addEventListener("click", (event) => {
   const container = document.getElementById("main_container");
-  container.innerHTML = `<section class="main_container_favorites" id="contenedor_favoritos"></section>`;
+  container.innerHTML = `<section class="main_container_favorites" id="contenedor_personajes"></section>`;
 
   for (const pj of personajes) {
-    const secondary_container = document.getElementById("contenedor_favoritos");
+    const secondary_container = document.getElementById(
+      "contenedor_personajes"
+    );
     secondary_container.innerHTML += `<div class="card">
                     <img class="card-image"
                         src="${pj.imagen}"
@@ -216,9 +224,69 @@ btn_login.addEventListener("click", (event) => {
     };
 
     if (admin.username == user.username && admin.password == user.password) {
-      alert("Logeado");
+      cargaPersonajes();
     } else {
-      alert("Escribbi bien");
+      alert("Usuario o contraseña incorrectos");
+      form_login.reset();
+      form_login.elements.username.focus();
     }
   });
 });
+
+function cargaPersonajes() {
+  const container = document.getElementById("main_container");
+  container.innerHTML = `<article class="login_form">
+        <form action="" id="personaje_form">
+            <label for="nombre">Ingrese nombre de personaje</label>
+            <input type="text" placeholder="Nombre" name="nombre">
+            <label for="imagen">Ingrese URL o ruta a la imagen de personaje</label>
+            <input type="text" placeholder="URL o Ruta" name="imagen">
+            <label for="descripcion">Ingrese descripcion de personaje</label>
+            <input type="text" placeholder="Breve descipción" name="descripcion">
+            <label for="nivel">Ingrese el nivel actual de personaje</label>
+            <input type="number" placeholder="23" name="nivel" min="1" max="1000">
+            <label for="salud">Ingrese la salud actual del personaje</label>
+            <input type="number" placeholder="230" name="salud" min="1">
+             <label for="clase">Ingrese clase de personaje</label>
+            <input type="text" placeholder="Guerrero" name="clase">
+            <input type="submit" value="GUARDAR" id="">
+        </form>
+        <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Imagen</th>
+                        <th>Descripcion</th>
+                        <th>Nivel</th>
+                        <th>Salud</th>
+                        <th>Clase</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody id="personajes_tabla">
+
+                </tbody>
+            </table>
+    </article>`;
+  const personaje_form = document.getElementById("personaje_form");
+  personaje_form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const personajeNuevo = {
+      nombre: personaje_form.elements.nombre.value,
+      imagen: personaje_form.elements.imagen.value,
+      descripcion: personaje_form.elements.descripcion.value,
+      nivel: personaje_form.elements.nivel.valueAsNumber,
+      salud: personaje_form.elements.salud.valueAsNumber,
+      clase: personaje_form.elements.clase.value,
+    };
+    personajes.push(personajeNuevo);
+    const personajesJSON = JSON.stringify(personajes);
+    localStorage.setItem("personajesDB", personajesJSON);
+  });
+}
+
+function renderTablaPersonajes() {
+  const container = document.getElementById("main_container");
+  container.innerHTML += ``;
+}
