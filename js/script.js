@@ -28,6 +28,7 @@ const personajesBases = [
     nivel: 100,
     salud: 335,
     clase: "Asesino",
+    id: "96656417-7cd9-46f9-9dd6-4db7584f8cbb",
   },
   {
     nombre: "Elena",
@@ -36,6 +37,7 @@ const personajesBases = [
     nivel: 80,
     salud: 280,
     clase: "Hechicera",
+    id: "96656417-7cd9-46f9-9dd6-4db7584f8ccc",
   },
   {
     nombre: "Thorgal",
@@ -44,6 +46,7 @@ const personajesBases = [
     nivel: 95,
     salud: 310,
     clase: "Guerrero",
+    id: "96656417-7cd9-47f9-9dd6-4db7584f8cbb",
   },
   {
     nombre: "Lyra",
@@ -52,6 +55,7 @@ const personajesBases = [
     nivel: 88,
     salud: 290,
     clase: "Cazadora",
+    id: "96633417-7cd9-46f9-9dd6-4db7584f8cbb",
   },
   {
     nombre: "Gandar",
@@ -60,6 +64,7 @@ const personajesBases = [
     nivel: 92,
     salud: 300,
     clase: "Mago",
+    id: "93356417-7cd9-46f9-9dd6-4db7584f8cbb",
   },
   {
     nombre: "Azura",
@@ -68,6 +73,7 @@ const personajesBases = [
     nivel: 85,
     salud: 295,
     clase: "Sacerdotisa",
+    id: "96656417-7db9-46f9-9dd6-4db7584f8cbb",
   },
   {
     nombre: "Ragnar",
@@ -76,6 +82,7 @@ const personajesBases = [
     nivel: 90,
     salud: 305,
     clase: "Bárbaro",
+    id: "96656417-ddd9-46f9-9dd6-4db7584f8cbb",
   },
   {
     nombre: "Zara",
@@ -84,6 +91,7 @@ const personajesBases = [
     nivel: 75,
     salud: 270,
     clase: "Pícaro",
+    id: "95556417-7cd9-46f9-9dd6-4db7584f8cbb",
   },
   {
     nombre: "Xarok",
@@ -92,6 +100,7 @@ const personajesBases = [
     nivel: 82,
     salud: 285,
     clase: "Brujo",
+    id: "96656417-7cd9-46f9-9dd6-4db7584f33cbb",
   },
   {
     nombre: "Aurelia",
@@ -100,6 +109,7 @@ const personajesBases = [
     nivel: 98,
     salud: 320,
     clase: "Paladín",
+    id: "96656327-7cd9-46f9-9dd6-4db7584f8cbb",
   },
 ];
 
@@ -233,9 +243,12 @@ btn_login.addEventListener("click", (event) => {
   });
 });
 
+//pantalla de carga de personajes
 function cargaPersonajes() {
   const container = document.getElementById("main_container");
   container.innerHTML = `<article class="login_form">
+          <h1>Cargar personajes</h1>
+            
         <form action="" id="personaje_form">
             <label for="nombre">Ingrese nombre de personaje</label>
             <input type="text" placeholder="Nombre" name="nombre">
@@ -251,28 +264,38 @@ function cargaPersonajes() {
             <input type="text" placeholder="Guerrero" name="clase">
             <input type="submit" value="GUARDAR" id="">
         </form>
-        <table>
+        <h1>Borrar personajes</h1>
+       <form action="" id="borrarPersonaje_form">
+            <label for="buscarID">Ingrese el id del personaje a borrar</label>
+            <input type="text" placeholder="96656327-7cd9-46f9-9dd6-4db7584f8cbb" name="buscarID">
+            <input type="submit" value="BORRAR" id="">
+        </form>
+    </article>
+     <table>
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Nombre</th>
                         <th>Imagen</th>
                         <th>Descripcion</th>
                         <th>Nivel</th>
                         <th>Salud</th>
                         <th>Clase</th>
-                        <th>Eliminar</th>
                     </tr>
                 </thead>
                 <tbody id="personajes_tabla">
-
+                   
                 </tbody>
-            </table>
-    </article>`;
+            </table>`;
+  //pintar personajes
+  renderTablaPersonajes();
+  //evento de cargar personaje
   const personaje_form = document.getElementById("personaje_form");
   personaje_form.addEventListener("submit", (event) => {
     event.preventDefault();
 
     const personajeNuevo = {
+      id: crypto.randomUUID(),
       nombre: personaje_form.elements.nombre.value,
       imagen: personaje_form.elements.imagen.value,
       descripcion: personaje_form.elements.descripcion.value,
@@ -283,10 +306,49 @@ function cargaPersonajes() {
     personajes.push(personajeNuevo);
     const personajesJSON = JSON.stringify(personajes);
     localStorage.setItem("personajesDB", personajesJSON);
+    renderTablaPersonajes();
+    personaje_form.reset();
+    personaje_form.elements.nombre.focus();
+  });
+  //evento de borrar personajes
+  const borrarPersonajes_form = document.getElementById("borrarPersonaje_form");
+  borrarPersonajes_form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const id = borrarPersonajes_form.elements.buscarID.value;
+    borrarPersonaje(id);
+    borrarPersonajes_form.reset();
+    borrarPersonajes_form.elements.buscarID.focus();
   });
 }
 
 function renderTablaPersonajes() {
-  const container = document.getElementById("main_container");
-  container.innerHTML += ``;
+  const container = document.getElementById("personajes_tabla");
+  container.innerHTML = "";
+  const personajesInveretido = [...personajes];
+  personajesInveretido.reverse();
+  for (const pj of personajesInveretido) {
+    container.innerHTML += `<tr>
+                        <th>${pj.id}</th>
+                      <td>${pj.nombre}</td>
+                      <td><img src="${pj.imagen}"
+                        alt="${pj.nombre}"></td>
+                      <td>${pj.descripcion}</td>
+                      <td>${pj.nivel}</td>
+                      <td>${pj.salud}</td>
+                      <td>${pj.clase}</td>
+                   </tr>`;
+  }
+}
+
+function borrarPersonaje(id) {
+  const index = personajes.findIndex((cadaPersonaje) => {
+    cadaPersonaje.id === id;
+  });
+  if (index === -1) {
+    alert("No se encontro personaje");
+  } else {
+    personajes.splice(index, 1);
+  }
+  const personajesJSON = JSON.stringify(personajes);
+  localStorage.setItem("personajesDB", personajesJSON);
 }
